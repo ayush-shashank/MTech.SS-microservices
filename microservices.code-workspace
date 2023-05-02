@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "api-gateway"
+		},
+		{
+			"path": "user-service"
+		},
+		{
+			"path": "product-service"
+		},
+		{
+			"path": "payment-service"
+		}
+	]
+}

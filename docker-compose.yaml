@@ -1,0 +1,62 @@
+# Use root/example as user/password credentials
+version: '3.9'
+
+services:
+
+  db:
+    container_name: db_microservice
+    image: mysql:latest
+    # NOTE: use of "mysql_native_password" is not recommended: https://dev.mysql.com/doc/refman/8.0/en/upgrading-from-previous-series.html#upgrade-caching-sha2-password
+    # (this is just an example, not intended to be a production configuration)
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    networks:
+      - my-net-bridge
+    ports:
+      - 3306:3306
+    expose:
+      - 3306
+    # command: mysqld --init-file="./init.sql"
+    volumes:
+      # - ./init.sql:/docker-entrypoint-initdb.d/:ro
+      - microservices-db-volume:/var/lib/mysql
+
+  adminer:
+    container_name: adminer_microservice
+    image: adminer
+    restart: always
+    networks:
+      - my-net-bridge
+    ports:
+      - 8080:8080
+
+  mircoservices:
+    container_name: microservices
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    depends_on:
+      - db
+    networks:
+      - my-net-bridge
+    environment:
+      DB_HOST: db
+    ports:
+      - 3000:3000
+      - 3011:3011
+      - 3012:3012
+      - 3013:3013
+    expose:
+      - 3000
+      - 3011
+      - 3012
+      - 3013
+
+networks:
+  my-net-bridge:
+    driver: bridge
+
+volumes:
+  microservices-db-volume:
